@@ -1,9 +1,14 @@
 #!/usr/bin/ruby
+#
+# More of a straight-up example of a script using salesforce-adapter.
+# Use script/console to interact with the spec fixtures via IRB.
 
 require 'rubygems'
 require 'dm-core'
-require 'dm-salesforce'
+require 'dm-salesforce-adapter'
 
+# NOTE: These schemas need to match what's in salesforce.  If you get errors
+# when fetching Account.first, it probably means your schema doesn't match.
 class Account
   include DataMapper::Salesforce::Resource
 
@@ -44,11 +49,13 @@ class Contact
   belongs_to :account
 end
 
+# NOTE: You need to update this with your own configuration information in order
+# for anything to actually work.
 DataMapper.setup(:salesforce, {:adapter  => 'salesforce',
                                :username => 'api-user@example.org',
                                :password => 'PASSWORD',
-                               :path => "/path/to/the/wsdl/for/salesforce",
-                               :apidir  => ENV['SALESFORCE_DIR'] || "/tmp/dm-salesforce_#{$$}",
+                               :path     => "/path/to/the/wsdl/for/salesforce.wsdl",
+                               :apidir   => ENV['SALESFORCE_DIR'] || "/tmp/dm-salesforce_#{$$}",
                                :host => ''})
 
 puts Account.first.inspect

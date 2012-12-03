@@ -1,4 +1,4 @@
-module DataMapper::Salesforce
+class SalesforceAdapter
   class SoapWrapper
     class ClassesFailedToGenerate < StandardError; end
 
@@ -14,14 +14,30 @@ module DataMapper::Salesforce
       @driver ||= Object.const_get(module_name).const_get(driver_name).new
     end
 
+=begin
+    # Attempt at a run-time equivalent.  Works except for the API responses are
+    # in SOAP objects, not native ruby objects.  Haven't figured that one out..
+    def driver
+      return @driver if @driver
+
+      require 'wsdl/soap/wsdl2ruby'
+
+      factory            = SOAP::WSDLDriverFactory.new(wsdl_path)
+      class_name_creator = WSDL::SOAP::ClassNameCreator.new
+
+      eval(WSDL::SOAP::ClassDefCreator.new(factory.wsdl, class_name_creator, @module_name).dump, TOPLEVEL_BINDING)
+      eval(WSDL::SOAP::MappingRegistryCreator.new(factory.wsdl, class_name_creator, @module_name).dump, TOPLEVEL_BINDING)
+
+      @driver ||= factory.create_rpc_driver
+    end
+=end
+
     def generate_soap_classes
       unless File.file?(wsdl_path)
         raise Errno::ENOENT, "Could not find the WSDL at #{wsdl_path}"
       end
 
-      unless File.directory?(wsdl_api_dir)
-        FileUtils.mkdir_p wsdl_api_dir
-      end
+      FileUtils.mkdir_p(wsdl_api_dir)
 
       generate_files unless files_exist?
 

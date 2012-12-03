@@ -1,11 +1,13 @@
+require 'spec/spec_helper'
+
 describe "Account" do
   describe "#first" do
     #pending "testing first should not be on account"
     it "return the first element" do
       Account.first.should_not be_nil
     end
-    it "has a 15 character long id" do
-      Account.first.id.size.should == 15
+    it "has a 18 character long id" do
+      Account.first.id.size.should == 18
     end
   end
 
@@ -24,15 +26,17 @@ describe "Account" do
     end
     describe "successful creation" do
       let(:account) { Account.create(:name => "Adidas Corporation") }
-      it "has a 15 character long id" do
-        account.id.size.should == 15
+      it "has a 18 character long id" do
+        account.id.size.should == 18
       end
       it 'is not active by default' do
         account.active.should_not be_true
       end
 
-      it 'has no annual revenue by default' do
-        account.annual_revenue.should eql(0.0)
+      it 'floats can be nil' do
+        account.annual_revenue = nil
+        account.should be_valid
+        account.annual_revenue.should be_nil
       end
     end
     describe "successful creation with on-offs" do

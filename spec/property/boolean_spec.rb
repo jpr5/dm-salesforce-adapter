@@ -1,4 +1,6 @@
-describe DataMapper::Salesforce::Types::Boolean do
+require 'spec/spec_helper'
+
+describe SalesforceAdapter::Property::Boolean do
   let(:active_account) { DataMapper.repository(:salesforce) { Account.gen(:active => true) } }
   let(:inactive_account) { DataMapper.repository(:salesforce) { Account.gen(:active => false) } }
 

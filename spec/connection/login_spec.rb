@@ -1,3 +1,5 @@
+require 'spec/spec_helper'
+
 module DataMapper::Salesforce
   describe "Using the raw connection" do
     describe "when authenticating without an organization id" do

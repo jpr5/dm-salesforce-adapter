@@ -1,4 +1,4 @@
-module DataMapper::Salesforce
+class SalesforceAdapter
   module SQL
     def conditions_statement(conditions, repository)
       case conditions
@@ -83,15 +83,17 @@ module DataMapper::Salesforce
     end
 
     def quote_value(value, property)
-      if property.type == DataMapper::Salesforce::Property::Boolean
+      if property.kind_of? Property::Boolean
         # True on salesforce needs to be TRUE/FALSE for WHERE clauses but not for inserts.
-        return value == DataMapper::Salesforce::Property::Boolean::TRUE ? 'TRUE' : 'FALSE'
+        return value == Property::Boolean::TRUE ? 'TRUE' : 'FALSE'
       end
 
       case value
       when Array then "(#{value.map {|v| quote_value(v, property)}.join(", ")})"
       when NilClass then "NULL"
       when String then "'#{value.gsub(/'/, "\\'").gsub(/\\/, %{\\\\})}'"
+      when Date then value.iso8601
+      when DateTime, Time then value.iso8601(2)
       else "#{value}"
       end
     end

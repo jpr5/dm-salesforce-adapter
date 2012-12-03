@@ -1,5 +1,5 @@
-module DataMapper::Salesforce
-  class Connection
+class SalesforceAdapter::Connection
+  module Errors
     class Error             < StandardError; end
     class FieldNotFound     < Error; end
     class LoginFailed       < Error; end
@@ -11,7 +11,7 @@ module DataMapper::Salesforce
     class SOAPError      < Error
       def initialize(message, result)
         @result = result
-        super("#{message}: #{result_message}")
+        super("#{message}: #{result.inspect}")
       end
 
       def records

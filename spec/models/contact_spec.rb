@@ -1,3 +1,5 @@
+require 'spec/spec_helper'
+
 describe "Finding a Contact" do
   let(:valid_id) { DataMapper.repository(:salesforce) { Contact.gen.id } }
 
@@ -5,14 +7,14 @@ describe "Finding a Contact" do
     Contact.first(:id => valid_id).should_not be_nil
   end
 
-  it "has a 15 character long id" do
+  it "has a 18 character long id" do
     #pending "testing serial types should be done elsewhere"
-    Contact.first(:id => valid_id).id.size.should == 15
+    Contact.first(:id => valid_id).id.size.should == 18
   end
 
-  it "has a 15 character long account_id" do
+  it "has a 18 character long account_id" do
     #pending "testing association ids as serial types should be done elsewhere"
-    Contact.first(:id => valid_id).account_id.size.should == 15
+    Contact.first(:id => valid_id).account_id.size.should == 18
   end
 
   it "should get a single contact" do

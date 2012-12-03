@@ -1,15 +1,13 @@
-dm-salesforce
-=============
+dm-salesforce-adapter
+=====================
 
-A gem that provides a Salesforce Adapter for DataMapper 0.10.x, and basic 1.0.x
-support.
+This gem provides a Salesforce Adapter under DataMapper 1.[12].x.
 
-If you're looking for ongoing DM1 support,
-[dm-salesforce-adapter](http://github.com/cloudcrowd/dm-salesforce-adapter) is
-actively maintained to support it so use that instead.
+Past version support:
 
-There are older versions of dm-salesforce specifically for 0.9.x, but they are
-no longer supported.
+- DataMapper 1.0.x is supported by dm-salesforce-adapter 1.0.1 (https://github.com/cloudcrowd/dm-salesforce-adapter/tree/v1.0.1)
+- DataMapper 0.10.x is supported by dm-salesforce 0.10.5 (https://github.com/jpr5/dm-salesforce/tree/v0.10.5)
+- DataMapper 0.9.x is not supported
 
 What it looks like
 ==================
@@ -21,13 +19,7 @@ What it looks like
         :salesforce
       end
 
-      # Old method for declaring which fields are Salesforce-style IDs.  Alternatively,
-      # can use the Salesforce-specific Serial custom DM type (see next model).
-      def self.salesforce_id_properties
-        :id
-      end
-
-      property :id,          String, :key => true
+      property :id,          Serial
       property :name,        String
       property :description, String
       property :fax,         String
@@ -64,18 +56,18 @@ What it looks like
     account.is_awesome = true
     account.save
 
-See [the fixtures](http://github.com/jpr5/dm-salesforce/tree/master/spec/fixtures) for more
-examples.
+See [the fixtures](http://github.com/cloudcrowd/dm-salesforce-adapter/tree/master/spec/fixtures) for more examples.
 
 How it works
 ============
 
-Salesforce provides an XML-based WSDL definition of an existing schema/object model for
-download.  The dm-salesforce adapter uses this WSDL to auto-generate a SOAP-based Ruby
-driver and classes, which is then used to implement a basic, low-level DataMapper Adapter.
+Salesforce provides an XML-based WSDL definition of an existing schema/object
+model for download.  dm-salesforce-adapter uses this WSDL to auto-generate a
+SOAP-based Ruby driver and classes, which is then used to implement a basic,
+low-level DataMapper Adapter.
 
-Upon first access, the driver and classes are cached locally on disk in one of the
-following locations (in order of precedence):
+Upon first access, the driver and classes are cached locally on disk in one of
+the following locations (in order of precedence):
 
   * In `apidir`, defined in `database.yml` (see included database.yml-example)
   * In `ENV['SALESFORCE_DIR']`
@@ -127,6 +119,7 @@ Special Thanks to those who helped
 * Jordan Ritter
 * Martin Emde
 * Jason Snell
+* Frederic Jean
 
 [setup]: http://img.skitch.com/20090204-gaxdfxbi1emfita5dax48ids4m.jpg "Click on Setup"
 [getwsdl]: http://img.skitch.com/20090204-nhurnuxwf5g3ufnjk2xkfjc5n4.jpg "Expand and Save"

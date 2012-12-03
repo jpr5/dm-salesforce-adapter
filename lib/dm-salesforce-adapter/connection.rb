@@ -1,5 +1,9 @@
-module DataMapper::Salesforce
+require 'dm-salesforce-adapter/connection/errors'
+
+class SalesforceAdapter
   class Connection
+    include Errors
+
     class HeaderHandler < SOAP::Header::SimpleHandler
       def initialize(tag, value)
         super(XSD::QName.new('urn:enterprise.soap.sforce.com', tag))
@@ -45,14 +49,14 @@ module DataMapper::Salesforce
 
     def field_name_for(klass_name, column)
       klass = SalesforceAPI.const_get(klass_name)
-      fields = [column, column.camel_case, "#{column}__c".downcase]
+      fields = [column, Inflector.camelize(column.to_s), "#{Inflector.camelize(column.to_s)}__c", "#{column}__c".downcase]
       options = /^(#{fields.join("|")})$/i
       matches = klass.instance_methods(false).grep(options)
       if matches.any?
         matches.first
       else
         raise FieldNotFound,
-            "You specified #{column} as a field, but neither #{fields.join(" or ")} exist. " \
+            "You specified #{column} as a field, but none of the expected field names exist: #{fields.join(", ")}. " \
             "Either manually specify the field name with :field, or check to make sure you have " \
             "provided a correct field name."
       end
@@ -60,7 +64,14 @@ module DataMapper::Salesforce
 
     def query(string)
       with_reconnection do
-        driver.query(:queryString => string).result
+        res = driver.query(:queryString => string).result
+        records = res.records
+        while !res.done
+          res = driver.queryMore(:queryLocator => res.queryLocator).result
+          records += res.records
+        end
+        res.records = records 
+        res
       end
     rescue SOAP::FaultError => e
       raise QueryError.new(e.message, [])
@@ -93,10 +104,10 @@ module DataMapper::Salesforce
       begin
         result = driver.login(:username => @username, :password => @password).result
       rescue SOAP::FaultError => error
-        if error.faultcode.to_obj == "sf:INVALID_LOGIN" || error.faultcode.to_obj == "INVALID_LOGIN"
-          raise LoginFailed, "Could not login to Salesforce; #{error.faultstring.text}"
-        else
-          raise
+        case error.faultcode.text
+        when "sf:INVALID_LOGIN" then raise LoginFailed, error.faultstring.text
+        # ...
+        else raise error
         end
       end
       driver.endpoint_url = result.serverUrl
@@ -123,17 +134,16 @@ module DataMapper::Salesforce
       yield
     rescue SOAP::FaultError => error
       retry_count ||= 0
-      if error.faultcode.text == "sf:INVALID_SESSION_ID"
-        $stderr.puts "Got a invalid session id; reconnecting"
+
+      case error.faultcode.text
+      when "sf:INVALID_SESSION_ID" then
+        DataMapper.logger.debug "Got a invalid session id; reconnecting" if DataMapper.logger
         @driver = nil
         login
         retry_count += 1
         retry unless retry_count > 5
-      else
-        raise
+      else raise error
       end
-
-      raise SessionTimeout, "The Salesforce session could not be established"
     end
   end
 end

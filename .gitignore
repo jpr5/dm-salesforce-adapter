@@ -1,3 +1,4 @@
+config/database.yml
 config/database.rb
 config/*.wsdl
 .gemrc
@@ -6,3 +7,6 @@ coverage/
 pkg/
 gbin
 tmp
+Gemfile.lock
+.bundle
+vendor
