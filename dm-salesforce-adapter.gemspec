@@ -7,8 +7,8 @@ Gem::Specification.new do |s|
   s.summary          = "A DataMapper 1.x adapter to the Salesforce API"
   s.description      = s.summary
   s.authors          = [ "Jordan Ritter", "Frederic Jean", "Tim Carey-Smith", "Andy Delcambre", "Yehuda Katz" ]
-  s.email            = "jpr5@serv.io"
-  s.homepage         = "http://github.com/cloudcrowd/dm-salesforce-adapter"
+  s.email            = "jpr5@darkridge.com"
+  s.homepage         = "https://github.com/jpr5/dm-salesforce-adapter"
 
   s.add_dependency "httpclient",     "= 2.1.5.2"
   s.add_dependency "data_objects",   "~> 0.10.6"

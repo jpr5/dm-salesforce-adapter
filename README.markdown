@@ -5,8 +5,8 @@ This gem provides a Salesforce Adapter under DataMapper 1.[12].x.
 
 Past version support:
 
-- DataMapper 1.0.x is supported by dm-salesforce-adapter 1.0.1 (https://github.com/cloudcrowd/dm-salesforce-adapter/tree/v1.0.1)
-- DataMapper 0.10.x is supported by dm-salesforce 0.10.5 (https://github.com/jpr5/dm-salesforce/tree/v0.10.5)
+- DataMapper 1.0.x is supported by dm-salesforce-adapter 1.0.1 (https://github.com/jpr5/dm-salesforce-adapter/tree/v1.0.1)
+- DataMapper 0.10.x is supported by dm-salesforce 0.10.5 (https://github.com/jpr5/dm-salesforce-0.10.x/tree/v0.10.5)
 - DataMapper 0.9.x is not supported
 
 What it looks like
